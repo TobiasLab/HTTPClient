@@ -7,6 +7,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class HttpClientTest {
     @Test
     void mathShouldWork() {
-        assertEquals(5, 2+2);
+        assertEquals(5, 2+3);
     }
 }
