@@ -14,9 +14,17 @@ public class HttpClientTest {
 
     @Test
     void shouldReadStatusCode() throws IOException {
-        HttpClient client = new HttpClient("urlecho.appspot.com", "/echo?status=401");
+        HttpClient client = new HttpClient("urlecho.appspot.com", "/echo");
         client.executeRequest();
         assertEquals(200, client.getStatusCode());
+
+    }
+
+    @Test
+    void shouldReadFailureStatusCode() throws IOException {
+        HttpClient client = new HttpClient("urlecho.appspot.com", "/echo");
+        client.executeRequest();
+        assertEquals(401, client.getStatusCode());
 
     }
 }

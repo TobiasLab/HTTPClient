@@ -9,14 +9,15 @@ public class HttpClient {
     private String host;
     private int statusCode = 200;
     private String requestTarget;
+    private String statusLine;
 
-    public HttpClient(String host) {
+    public HttpClient(String host, String requestTarget) {
         this.host = host;
-        requestTarget = "/echo?status=200&Content-Type=text%2Fhtml&body=Hello%20world!";
+        this.requestTarget = requestTarget;
     }
 
     public static void main(String[] args) throws IOException {
-        new HttpClient("urlecho.appspot.com").executeRequest();
+        new HttpClient("urlecho.appspot.com", "/echo?status=200&Content-Type=text%2Fhtml&body=Hello%20world!").executeRequest();
     }
 
     public void executeRequest() throws IOException {
@@ -28,19 +29,23 @@ public class HttpClient {
             socket.getOutputStream().flush();
 
             InputStream input = socket.getInputStream();
-            int c = input.read();  // c is really a byte (0-255), but has to be int to allow for -1
-            while (c != -1) { //-1 means "end of stream"
-                System.out.print((char) c); // Force c (which is an int) to be interpreted as character
+            int c;// c is really a byte (0-255), but has to be int to allow for -1
+
+            StringBuilder statusLine = new StringBuilder();
+            while ((c = input.read()) != -1 && c != '\r') {
+                statusLine.append((char)c);
+            }
+            this.statusLine = statusLine.toString();
+
+            while ((c = input.read()) != -1) { //-1 means "end of stream"
+                System.out.print((char)c); // Force c (which is an int) to be interpreted as character
                 // c = input.read();
             }
         }
     }
 
     public int getStatusCode() {
-        return statusCode;
+        return Integer.parseInt(statusLine.split(" ")[1]);
     }
 
-    public void setStatusCode(int statusCode) {
-        this.statusCode = statusCode;
-    }
 }
