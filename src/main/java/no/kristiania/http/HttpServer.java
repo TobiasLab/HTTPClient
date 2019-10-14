@@ -14,12 +14,26 @@ public class HttpServer {
             System.out.println("Line" + line);
         }
         System.out.println("Done");
+
+        socket.getOutputStream().write("HTTP/1.1 200 OK\r\n".getBytes());
+        socket.getOutputStream().write("Content-Type: text/html; charset=utf-8\r\n".getBytes());
+        socket.getOutputStream().write("Content-Length: 4\r\n".getBytes());
+        socket.getOutputStream().write("Connection: close\r\n".getBytes());
+        socket.getOutputStream().write("\r\n".getBytes());
+        socket.getOutputStream().write("Hei\2\n".getBytes());
     }
 
     private static String readLine(Socket socket) throws IOException {
         int c;
         StringBuilder line = new StringBuilder();
-        while ((c = socket.getInputStream().read()) != -1 && c != '\n' && c != '\r') {
+        while ((c = socket.getInputStream().read()) != -1) {
+            if (c == '\r') {
+                c = socket.getInputStream().read();
+                if (c != '\n') {
+                    System.err.println("Unexpected character! " + ((char)c));
+                }
+                return line.toString();
+            }
             line.append((char)c);
         }
         return line.toString();
