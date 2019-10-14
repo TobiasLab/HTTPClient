@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.Socket;
 
-class HttpClientResponse {
+public class HttpClientResponse {
 
     private Socket socket;
     private String statusLine;

@@ -3,6 +3,7 @@ package no.kristiania.http;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 
 public class HttpServer {
     public static void main(String[] args) throws IOException {
@@ -16,11 +17,11 @@ public class HttpServer {
         System.out.println("Done");
 
         socket.getOutputStream().write("HTTP/1.1 200 OK\r\n".getBytes());
-        socket.getOutputStream().write("Content-Type: text/html; charset=utf-8\r\n".getBytes());
-        socket.getOutputStream().write("Content-Length: 4\r\n".getBytes());
+        socket.getOutputStream().write("Content-Type: text/plain\r\n".getBytes());
+        socket.getOutputStream().write("Content-Length: 13\r\n".getBytes());
         socket.getOutputStream().write("Connection: close\r\n".getBytes());
         socket.getOutputStream().write("\r\n".getBytes());
-        socket.getOutputStream().write("Hei\2\n".getBytes());
+        socket.getOutputStream().write("Hallå Verden\2\n".getBytes(StandardCharsets.ISO_8859_1));
     }
 
     private static String readLine(Socket socket) throws IOException {
