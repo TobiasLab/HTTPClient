@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.Socket;
 
+
 public class HttpClientResponse {
 
     private Socket socket;
@@ -15,21 +16,33 @@ public class HttpClientResponse {
 
     public void invoke() throws IOException {
         InputStream input = socket.getInputStream();
-        int c;// c is really a byte (0-255), but has to be int to allow for -1
+        int c;
 
-        StringBuilder statusLine = new StringBuilder();
-        while ((c = input.read()) != -1 && c != '\r') {
-            statusLine.append((char)c);
-        }
-        this.statusLine = statusLine.toString();
-
-        while ((c = input.read()) != -1) { //-1 means "end of stream"
-            System.out.print((char)c); // Force c (which is an int) to be interpreted as character
-            // c = input.read();
+        this.statusLine = readLine(socket);
+        System.out.print(this.statusLine);
+        String line;
+        while (!(line = readLine(socket)).isEmpty()) {
+            System.out.println(getClass().getSimpleName() + ": " + line);
         }
     }
+
+    private static String readLine(Socket socket) throws IOException {
+        int c;
+        StringBuilder line = new StringBuilder();
+        while ((c = socket.getInputStream().read()) != -1) {
+            if (c == '\r') {
+                c = socket.getInputStream().read();
+                if (c != '\n') {
+                    System.err.println("Unexpected character! " + ((char)c));
+                }
+            }
+        }
+        return line.toString();
+    }
+
 
     public int getStatusCode() {
         return Integer.parseInt(statusLine.split(" ")[1]);
     }
 }
+
